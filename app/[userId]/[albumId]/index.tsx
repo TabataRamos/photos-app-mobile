@@ -12,9 +12,7 @@ interface PhotosType {
 
 export default function Album() {
   const [photos, setPhotos] = useState<PhotosType[]>([]);
-  const { albumId, userName } = useLocalSearchParams();
-
-  console.log(albumId, userName);
+  const { albumId, userName, userId } = useLocalSearchParams();
 
   useEffect(() => {
     if (!albumId) return;
@@ -25,7 +23,7 @@ export default function Album() {
   }, [albumId]);
 
   return (
-    <View style={styles.container}>
+    <View>
       <View style={styles.flex}>
         <Text style={styles.header}>galeria de fotos</Text>
         <Text style={styles.header}>{userName}</Text>
@@ -36,10 +34,16 @@ export default function Album() {
         numColumns={2}
         renderItem={({ item }) => (
           <Link
+            push
             key={item.id}
             href={{
-              pathname: "/albuns/album/[photo]",
-              params: { photo: item.id },
+              pathname: "/[userId]/[albumId]/[photo]",
+              params: {
+                userId: userId as string,
+                userName: userName,
+                albumId: item.albumId,
+                photo: item.id,
+              },
             }}
           >
             <View style={styles.album}>
@@ -59,9 +63,6 @@ export default function Album() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-  },
   flex: {
     flexDirection: "row",
     display: "flex",
@@ -76,19 +77,12 @@ const styles = StyleSheet.create({
   title: {
     color: "#F0F0F0",
     fontSize: 14,
-    // paddingVertical: 10,
   },
-  // squares: {
-  //   position: "relative",
-  //   height: 160,
-  // },
   square: {
     width: 150,
     height: 150,
     backgroundColor: "#F0F0F0",
     borderRadius: 15,
-    // borderColor: "black",
-    // borderWidth: 2,
   },
   album: {
     width: 150,

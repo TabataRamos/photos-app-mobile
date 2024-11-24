@@ -39,10 +39,11 @@ export default function Index() {
         numColumns={2}
         renderItem={({ item }) => (
           <Link
+            push
             key={item.id}
             href={{
-              pathname: "/albuns/[userId]",
-              params: { userId: item.id },
+              pathname: "/[userId]",
+              params: { userId: item.id, userName: item.name },
             }}
           >
             <User user={item} />

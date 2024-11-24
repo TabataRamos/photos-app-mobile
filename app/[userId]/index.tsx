@@ -10,9 +10,8 @@ interface AlbumType {
 }
 
 export default function Albuns() {
-  const { userId: id } = useLocalSearchParams();
+  const { userId: id, userName } = useLocalSearchParams();
   const [albuns, setAlbuns] = useState<AlbumType[]>([]);
-  const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
     if (!id) return;
@@ -22,23 +21,8 @@ export default function Albuns() {
       .catch((error) => console.error("Erro ao buscar álbuns:", error));
   }, [id]);
 
-  useEffect(() => {
-    if (!id) return;
-    fetch(`https://jsonplaceholder.typicode.com/users?id=${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length > 0) {
-          setUserName(data[0].name);
-        }
-      })
-      .catch((error) => console.error("Erro ao buscar usuário:", error));
-  }, [id]);
-
-  console.log("TESTE:", id, userName);
-  console.log(albuns);
-
   return (
-    <View style={styles.container}>
+    <View>
       <View style={styles.flex}>
         <Text style={styles.header}>galeria de albuns</Text>
         <Text style={styles.header}>{userName}</Text>
@@ -49,10 +33,15 @@ export default function Albuns() {
         numColumns={2}
         renderItem={({ item }) => (
           <Link
+            push
             key={item.id}
             href={{
-              pathname: "/albuns/album/[albumId]",
-              params: { albumId: item.id, userName: userName },
+              pathname: "/[userId]/[albumId]",
+              params: {
+                albumId: item.id,
+                userName: userName,
+                userId: id as string,
+              },
             }}
           >
             <Album albumId={item.id} text={item.title} />
@@ -66,9 +55,6 @@ export default function Albuns() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-  },
   flex: {
     flexDirection: "row",
     display: "flex",
